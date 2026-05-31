@@ -1,0 +1,19 @@
+# Proxy listens here; redirect the game's AEC hostname to 127.0.0.1 via hosts file.
+listen:
+  host: 127.0.0.1
+  port: 6150  # match game's expected port so the hosts redirect works cleanly
+
+# Real upstream AEC server. Discovered live via netstat + DNS cache:
+# sockett4.aq.com CNAMEs to Cloudflare Spectrum (port-aware TCP LB) at
+# 172.65.210.123:6150. We use the IP directly to bypass our own hosts entry
+# (otherwise the proxy would loop back to itself).
+upstream:
+  host: 172.65.210.123
+  port: 6150
+  # For reference / readable logs:
+  hostname: sockett4.aq.com
+
+logging:
+  packets_jsonl: logs/packets.jsonl
+  # Pretty-print each packet's JSON to console as it flies by
+  console: true
